@@ -1,4 +1,4 @@
-# Inox
+# Dream11
 
 A synchronized watch-party platform. Users create rooms, invite friends, and
 watch video together with playback kept in sync across every participant, while
@@ -113,8 +113,8 @@ deploy/
 ## Getting started
 
 ```bash
-git clone git@github.com:Robinaditya1045/inox.git
-cd inox
+git clone https://github.com/SohamBalwant/Dream11.git
+cd Dream11
 cp .env.example .env
 
 # Start Postgres, Redis, MinIO and pgAdmin

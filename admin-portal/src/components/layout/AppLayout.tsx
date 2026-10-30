@@ -78,7 +78,7 @@ export function AppLayout() {
             <path d="M8.5 23.5h15" stroke="#0a0a0a" strokeOpacity=".55" strokeWidth="2" strokeLinecap="round" />
           </svg>
           <span className="hidden text-[17px] font-semibold tracking-tight text-white sm:inline">
-            Inox <span className="font-normal text-zinc-400">Studio</span>
+            Dream11 <span className="font-normal text-zinc-400">Studio</span>
           </span>
         </a>
 
@@ -172,7 +172,7 @@ export function AppLayout() {
                 <X className="h-5 w-5" />
               </IconButton>
               <span className="text-[17px] font-semibold tracking-tight text-white">
-                Inox <span className="font-normal text-zinc-400">Studio</span>
+                Dream11 <span className="font-normal text-zinc-400">Studio</span>
               </span>
             </div>
             <div className="h-[calc(100%-3.5rem)]">

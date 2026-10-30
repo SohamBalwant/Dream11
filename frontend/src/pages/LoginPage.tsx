@@ -57,7 +57,7 @@ export const LoginPage: React.FC = () => {
       subtitle="Sign in to pick up where your watch party left off."
       footer={
         <>
-          New to Inox?{" "}
+          New to Dream11?{" "}
           <Link to="/signup" className={styles.link}>
             Create an account
           </Link>

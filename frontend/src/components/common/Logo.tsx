@@ -12,7 +12,7 @@ interface LogoProps {
 const PLAY =
   "M12.4 10.3c0-1.02 1.1-1.66 1.99-1.15l8.46 4.89a1.33 1.33 0 0 1 0 2.3l-8.46 4.89c-.89.51-1.99-.13-1.99-1.15V10.3Z";
 
-/** The Inox mark: a play button over a shared timeline. */
+/** The Dream11 mark: a play button over a shared timeline. */
 export const Logo: React.FC<LogoProps> = ({
   size = 32,
   withWordmark = false,
@@ -42,10 +42,10 @@ export const Logo: React.FC<LogoProps> = ({
     </svg>
     {withWordmark ? (
       <span className={styles.wordmark} translate="no">
-        Inox
+        Dream11
       </span>
     ) : (
-      <span className="sr-only">Inox</span>
+      <span className="sr-only">Dream11</span>
     )}
   </span>
 );

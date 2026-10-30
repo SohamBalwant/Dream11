@@ -1,7 +1,7 @@
 export type CommunityCategory =
   "feature" | "improvement" | "fix" | "announcement";
 
-/** A platform update posted by the Inox team (see backend domain.CommunityPost). */
+/** A platform update posted by the Dream11 team (see backend domain.CommunityPost). */
 export interface CommunityPost {
   id: string;
   category: CommunityCategory;

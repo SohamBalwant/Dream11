@@ -348,7 +348,7 @@ export const SettingsShell: React.FC<SettingsShellProps> = ({
                 compact
                 icon={<Monitor size={20} />}
                 title="Appearance settings are coming soon"
-                description="Inox uses a dark theme tuned for watching video."
+                description="Dream11 uses a dark theme tuned for watching video."
               />
             )}
 

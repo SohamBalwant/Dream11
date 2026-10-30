@@ -779,7 +779,7 @@ export const WatchPartyPlayer: React.FC<WatchPartyPlayerProps> = ({
       tabIndex={0}
       onMouseMove={handleMouseMove}
       role="region"
-      aria-label="Inox WatchParty Video Player"
+      aria-label="Dream11 WatchParty Video Player"
       className={styles.container}
       data-controls={controlsVisible ? "shown" : "hidden"}
     >

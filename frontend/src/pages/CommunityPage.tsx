@@ -78,7 +78,7 @@ export const CommunityPage: React.FC = () => {
           aria-labelledby={panel.tab}
         >
           <div className={styles.intro}>
-            <h2 className={styles.introTitle}>What's new on Inox</h2>
+            <h2 className={styles.introTitle}>What's new on Dream11</h2>
             <p className={styles.introText}>
               New features, improvements, fixes and news from the team.
             </p>

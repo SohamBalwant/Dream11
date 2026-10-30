@@ -28,7 +28,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, isNew, style }) => {
   const category = CATEGORIES[post.category] ?? CATEGORIES.announcement;
   const Icon = category.icon;
   const published = post.published_at ? new Date(post.published_at) : null;
-  const author = post.author_username || "Inox team";
+  const author = post.author_username || "Dream11 team";
   const titleId = `post-${post.id}-title`;
 
   return (

@@ -70,7 +70,7 @@ export function Sidebar({ collapsed, onNavigate, connection }: SidebarProps) {
             <Shield className="h-3.5 w-3.5 text-emerald-400" aria-hidden="true" />
             Admin access
           </div>
-          <p className="mt-1 font-mono text-[11px] text-zinc-600">Inox Studio · v1.1</p>
+          <p className="mt-1 font-mono text-[11px] text-zinc-600">Dream11 Studio · v1.1</p>
         </div>
       )}
     </nav>
@@ -116,9 +116,9 @@ function WorkspaceCard({ connection }: { connection: SidebarProps["connection"] 
         aria-hidden="true"
         className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 via-emerald-600 to-cyan-700 text-2xl font-bold tracking-tight text-black shadow-lg shadow-emerald-950/50"
       >
-        IX
+        D11
       </div>
-      <p className="mt-3 text-sm font-semibold text-white">Inox</p>
+      <p className="mt-3 text-sm font-semibold text-white">Dream11</p>
       <p className="text-xs text-zinc-500">Admin workspace</p>
       <span
         className={cx(

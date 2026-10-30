@@ -122,7 +122,7 @@ const MOCK_ASSETS: MediaAsset[] = [
   },
   {
     id: "asset-proc-04",
-    title: "Inox SFU Platform Demo Showcase",
+    title: "Dream11 SFU Platform Demo Showcase",
     description: "Currently undergoing FFmpeg 3-tier ABR ladder transcoding in background worker...",
     source_url: "https://cdn.inox.stream/uploads/raw_demo_v2.mp4",
     status: "processing",
@@ -236,7 +236,7 @@ export function useMediaCatalog(): UseMediaCatalogResult {
       const newAsset: MediaAsset = {
         id: `asset-sim-${Date.now().toString().slice(-4)}`,
         title: title || file.name,
-        description: description || "Uploaded via Inox Admin Portal multipart uploader.",
+        description: description || "Uploaded via Dream11 Admin Portal multipart uploader.",
         source_url: `https://cdn.inox.stream/uploads/${file.name}`,
         status: "processing",
         duration_seconds: 180,
