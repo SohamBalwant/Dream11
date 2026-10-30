@@ -24,6 +24,7 @@ import (
 	"github.com/inox/inox/backend/internal/friend"
 	"github.com/inox/inox/backend/internal/playlist"
 	"github.com/inox/inox/backend/internal/live"
+	"github.com/inox/inox/backend/internal/matchbuddy"
 	"github.com/inox/inox/backend/internal/media"
 	"github.com/inox/inox/backend/internal/observability"
 	"github.com/inox/inox/backend/internal/room"
@@ -92,6 +93,10 @@ func (a *App) Run() error {
 		return fmt.Errorf("failed to initialize sfu media manager: %w", err)
 	}
 	hub.SetSFUManager(sfuMgr)
+	matchBuddyMgr := matchbuddy.NewManager(matchbuddy.NewTemplateCommentator(), func(evt *ws.Event) {
+		hub.Broadcast <- evt
+	})
+	hub.SetMatchBuddyHandler(matchBuddyMgr)
 	go hub.Run()
 
 	telemetryHub := observability.NewTelemetryHub(hub)

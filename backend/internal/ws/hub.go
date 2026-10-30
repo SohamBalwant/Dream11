@@ -14,9 +14,18 @@ import (
 	"github.com/pion/webrtc/v3"
 )
 
+// MatchBuddyHandler provides hooks for the Match Buddy companion engine.
+type MatchBuddyHandler interface {
+	HandleEvent(event *Event)
+	StopRoom(roomID string)
+	GetInitialState(roomID string) *Event
+}
+
 // Hub maintains the pool of active WebSocket clients partitioned by room IDs,
 // and coordinates real-time event broadcasting across connections.
 type Hub struct {
+	// Match Buddy companion engine
+	matchBuddyHandler MatchBuddyHandler
 	// Registered clients partitioned by room ID: rooms[roomID][client] = true
 	rooms map[string]map[*Client]bool
 
@@ -157,6 +166,11 @@ func (h *Hub) SetEventAggregator(ea *observability.EventAggregator) {
 // SetRedisEventBus wires the Redis Pub/Sub event bus.
 func (h *Hub) SetRedisEventBus(bus *RedisEventBus) {
 	h.redisEventBus = bus
+}
+
+// SetMatchBuddyHandler wires the Match Buddy companion engine.
+func (h *Hub) SetMatchBuddyHandler(mbh MatchBuddyHandler) {
+	h.matchBuddyHandler = mbh
 }
 
 func (h *Hub) getOrCreatePlaybackState(roomID string) *domain.RoomPlaybackState {
@@ -338,6 +352,14 @@ func (h *Hub) registerClient(client *Client) {
 	// Who is already in voice. The roster is only broadcast when it changes, so
 	// without this a late arrival sees an empty call until someone joins or leaves.
 	h.sendVoiceRoster(client)
+
+	// Send Match Buddy state snapshot to newly connected client
+	if h.matchBuddyHandler != nil {
+		if stateEvt := h.matchBuddyHandler.GetInitialState(client.RoomID); stateEvt != nil {
+			stateEvt.TargetID = client.UserID
+			h.sendToTarget(stateEvt)
+		}
+	}
 }
 
 // sendVoiceRoster gives one client the room's current voice roster.
@@ -453,6 +475,9 @@ func resumeParkedState(s *domain.RoomPlaybackState, nowMillis int64) {
 // retireRoom forgets a room nobody is connected to any more. Must only run on
 // the hub loop.
 func (h *Hub) retireRoom(roomID string) {
+	if h.matchBuddyHandler != nil {
+		h.matchBuddyHandler.StopRoom(roomID)
+	}
 	// Drop the leadership claim before the room state goes: otherwise it
 	// outlives the room, and the next person to join adopts a leader who
 	// is not there instead of triggering an election.
@@ -575,6 +600,14 @@ func (h *Hub) dispatchLocal(event *Event) {
 	// and the queue that result.
 	if isQueueCommand(event.Type) {
 		h.applyQueueCommand(event)
+		return
+	}
+
+	// Match Buddy commands are handled by the companion engine
+	if IsMatchBuddyCommand(event.Type) {
+		if h.matchBuddyHandler != nil {
+			h.matchBuddyHandler.HandleEvent(event)
+		}
 		return
 	}
 

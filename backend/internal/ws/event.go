@@ -77,7 +77,27 @@ const (
 	// relayed only to their target (see admitVoiceInvite).
 	EventVoiceInvite      EventType = "VOICE_INVITE"
 	EventVoiceInviteReply EventType = "VOICE_INVITE_REPLY"
+
+	// Match Buddy: Live Fantasy companion events
+	EventMatchControl     EventType = "MATCH_CONTROL"
+	EventMatchTeamSet     EventType = "MATCH_TEAM_SET"
+	EventMatchAsk         EventType = "MATCH_ASK"
+	EventMatchWhatIf      EventType = "MATCH_WHATIF"
+	EventMatchCatchUp     EventType = "MATCH_CATCHUP"
+	EventMatchState       EventType = "MATCH_STATE"
+	EventMatchBall        EventType = "MATCH_BALL"
+	EventMatchFeed        EventType = "MATCH_FEED"
+	EventMatchTeamChanges EventType = "MATCH_TEAM_CHANGES"
 )
+
+// IsMatchBuddyCommand reports whether an event is a client command directed to Match Buddy.
+func IsMatchBuddyCommand(t EventType) bool {
+	switch t {
+	case EventMatchControl, EventMatchTeamSet, EventMatchAsk, EventMatchWhatIf, EventMatchCatchUp:
+		return true
+	}
+	return false
+}
 
 // RemovalReason says why someone was removed from a room.
 type RemovalReason string
