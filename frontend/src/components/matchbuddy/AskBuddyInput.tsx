@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { MessageSquareText, Send, Zap } from "lucide-react";
+import { Send } from "lucide-react";
 import styles from "./AskBuddyInput.module.css";
 
 interface AskBuddyInputProps {
   onAsk: (question: string) => void;
-  onCatchUp: () => void;
+  onCatchUp?: () => void;
   disabled?: boolean;
 }
 
@@ -16,7 +16,6 @@ const QUICK_PROMPTS = [
 
 export const AskBuddyInput: React.FC<AskBuddyInputProps> = ({
   onAsk,
-  onCatchUp,
   disabled = false,
 }) => {
   const [question, setQuestion] = useState("");
@@ -36,17 +35,7 @@ export const AskBuddyInput: React.FC<AskBuddyInputProps> = ({
   return (
     <div className={styles.container}>
       <div className={styles.headerRow}>
-        <span className={styles.title}>
-          <MessageSquareText size={13} className="inline mr-1" /> Ask Match Buddy
-        </span>
-        <button
-          type="button"
-          className={styles.catchUpBtn}
-          onClick={onCatchUp}
-          disabled={disabled}
-        >
-          <Zap size={10} /> Catch me up
-        </button>
+        <span className={styles.title}>Ask Match Buddy</span>
       </div>
 
       <form onSubmit={handleSubmit} className={styles.inputForm}>
