@@ -4,7 +4,7 @@ import Hls, { type LoaderConfig } from "hls.js";
 import { usePlayerSync } from "../../hooks/usePlayerSync";
 import { usePermissions } from "../../hooks/usePermissions";
 import { useRoomSocket } from "../../hooks/useRoomSocket";
-import { normalizeMediaUrl } from "../../utils/mediaUrl";
+import { normalizeMediaUrl, extractYouTubeId } from "../../utils/mediaUrl";
 import {
   DRIFT_CHECK_INTERVAL_MS,
   LEADER_REPORT_INTERVAL_MS,
@@ -205,12 +205,25 @@ export const WatchPartyPlayer: React.FC<WatchPartyPlayerProps> = ({
 
   const permissions = usePermissions();
   const { isConnected } = useRoomSocket();
+  const youtubeId = extractYouTubeId(mediaUrl);
 
   // Attach Hls.js or native video whenever mediaUrl changes
   useEffect(() => {
     const video = videoRef.current;
     const effectiveUrl = normalizeMediaUrl(mediaUrl);
     if (!video || !effectiveUrl) return;
+
+    if (extractYouTubeId(effectiveUrl)) {
+      if (hlsRef.current) {
+        hlsRef.current.destroy();
+        hlsRef.current = null;
+      }
+      video.removeAttribute("src");
+      setLoadError(null);
+      setIsPlayingLocal(true);
+      return;
+    }
+
     let retryTimer: ReturnType<typeof setTimeout> | undefined;
 
     // Destroy any previous Hls instance
@@ -792,7 +805,17 @@ export const WatchPartyPlayer: React.FC<WatchPartyPlayerProps> = ({
             {isConnected ? <Wifi size={11} /> : <WifiOff size={11} />}
             <span>{isConnected ? "Synced" : "Offline"}</span>
           </div>
-          {levels.length > 0 && (
+          {youtubeId ? (
+            <div
+              className={styles.abrIndicator}
+              style={{
+                color: "var(--color-accent)",
+                borderColor: "var(--color-accent-border)",
+              }}
+            >
+              <Radio size={11} /> YouTube Live / Video
+            </div>
+          ) : levels.length > 0 && (
             <div className={styles.abrIndicator}>
               ABR · {currentQualityLabel}
             </div>
@@ -813,31 +836,51 @@ export const WatchPartyPlayer: React.FC<WatchPartyPlayerProps> = ({
       </div>
 
       {/* Video Element */}
-      <video
-        ref={videoRef}
-        onTimeUpdate={handleTimeUpdate}
-        onLoadedMetadata={handleLoadedMetadata}
-        onWaiting={handleWaiting}
-        onPlaying={handlePlaying}
-        onStalled={handleWaiting}
-        onCanPlay={handlePlaying}
-        onPlay={() => setIsPlayingLocal(true)}
-        onPause={() => setIsPlayingLocal(false)}
-        onEnded={handleEnded}
-        className={`${styles.video} ${canControl || isLive ? styles.videoClickable : ""}`}
-        onClick={handlePlayClick}
-        playsInline
-      />
+      {youtubeId ? (
+        <iframe
+          key={youtubeId}
+          src={`https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1&playsinline=1&enablejsapi=1`}
+          title="Live Video Stream"
+          className={styles.video}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+          style={{
+            border: 0,
+            width: "100%",
+            height: "100%",
+            position: "absolute",
+            inset: 0,
+          }}
+        />
+      ) : (
+        <video
+          ref={videoRef}
+          onTimeUpdate={handleTimeUpdate}
+          onLoadedMetadata={handleLoadedMetadata}
+          onWaiting={handleWaiting}
+          onPlaying={handlePlaying}
+          onStalled={handleWaiting}
+          onCanPlay={handlePlaying}
+          onPlay={() => setIsPlayingLocal(true)}
+          onPause={() => setIsPlayingLocal(false)}
+          onEnded={handleEnded}
+          className={`${styles.video} ${canControl || isLive ? styles.videoClickable : ""}`}
+          onClick={handlePlayClick}
+          playsInline
+        />
+      )}
 
-      <CaptionOverlay
-        videoRef={videoRef}
-        cues={captionCues}
-        className={styles.captions}
-        lineClassName={styles.captionLine}
-      />
+      {!youtubeId && (
+        <CaptionOverlay
+          videoRef={videoRef}
+          cues={captionCues}
+          className={styles.captions}
+          lineClassName={styles.captionLine}
+        />
+      )}
 
       {/* Centre overlay: one state at a time, error first */}
-      {!hasMedia ? (
+      {youtubeId ? null : !hasMedia ? (
         <div className={styles.emptyState}>
           <span className={styles.emptyIcon} aria-hidden="true">
             <Film size={26} />
@@ -922,7 +965,7 @@ export const WatchPartyPlayer: React.FC<WatchPartyPlayerProps> = ({
         )}
 
       {/* Bottom Controls */}
-      {hasMedia && (
+      {hasMedia && !youtubeId && (
         <div className={`${styles.bottomBar} ${styles.chrome}`}>
           {/* Transport row. A live stream has no fixed timeline to scrub, so it
               reports where the room is instead of offering a seek target. */}

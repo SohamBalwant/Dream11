@@ -20,3 +20,8 @@ deploy/oracle/admin-dist/
 # Local agent tooling
 .agents/
 skills-lock.json
+
+# Local database cluster
+pgdata/
+logfile
+

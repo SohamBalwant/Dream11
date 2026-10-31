@@ -56,3 +56,20 @@ export function normalizeMediaUrl(url: string | undefined | null): string {
 
   return url;
 }
+
+/**
+ * Extracts the 11-character YouTube video ID from various YouTube URL formats:
+ * - https://www.youtube.com/watch?v=VIDEO_ID
+ * - https://youtu.be/VIDEO_ID
+ * - https://www.youtube.com/live/VIDEO_ID
+ * - https://www.youtube.com/embed/VIDEO_ID
+ * - https://www.youtube.com/shorts/VIDEO_ID
+ */
+export function extractYouTubeId(url: string | undefined | null): string | null {
+  if (!url) return null;
+  const match = url.match(
+    /(?:youtu\.be\/|youtube\.com\/(?:watch\?.*v=|embed\/|live\/|v\/|shorts\/))([a-zA-Z0-9_-]{11})/i,
+  );
+  return match ? match[1] : null;
+}
+

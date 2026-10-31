@@ -710,13 +710,13 @@ export const MediaLibraryPicker: React.FC<MediaLibraryPickerProps> = ({
           {tab === "url" && (
             <div className={styles.urlPanel}>
               <TextField
-                label="Video URL (MP4, WebM or HLS .m3u8)"
+                label="Video URL (YouTube, MP4, WebM or HLS .m3u8)"
                 type="url"
                 name="media-url"
                 inputMode="url"
                 autoComplete="off"
                 spellCheck={false}
-                placeholder="https://example.com/video.mp4"
+                placeholder="https://www.youtube.com/watch?v=... or direct MP4/HLS"
                 value={customUrl}
                 onChange={(e) => setCustomUrl(e.target.value)}
                 icon={<Link2 size={16} />}
@@ -725,8 +725,8 @@ export const MediaLibraryPicker: React.FC<MediaLibraryPickerProps> = ({
                 }}
               />
               <p className={styles.hint}>
-                Paste any direct video link. HLS manifests (.m3u8) stream with
-                adaptive bitrate through hls.js.
+                Paste any YouTube video or live stream link, or direct video
+                stream (HLS .m3u8, MP4).
               </p>
             </div>
           )}
