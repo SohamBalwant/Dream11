@@ -71,52 +71,6 @@ export const LoginPage: React.FC = () => {
     >
       {error && <Alert>{error}</Alert>}
 
-      <div
-        style={{
-          background: "rgba(225, 29, 42, 0.12)",
-          border: "1px solid rgba(225, 29, 42, 0.35)",
-          borderRadius: "var(--radius-md)",
-          padding: "8px 12px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: "8px",
-          fontSize: "var(--text-xs)",
-        }}
-      >
-        <div>
-          <span style={{ color: "#ff7680", fontWeight: 700 }}>Demo login: </span>
-          <span style={{ color: "#ffffff", fontFamily: "var(--font-mono)" }}>
-            cricketer@dream11.com
-          </span>
-          {" / "}
-          <span style={{ color: "#ffffff", fontFamily: "var(--font-mono)" }}>
-            Password@123
-          </span>
-        </div>
-        <button
-          type="button"
-          onClick={() => {
-            setEmail("cricketer@dream11.com");
-            setPassword("Password@123");
-            setFieldErrors({});
-          }}
-          style={{
-            background: "#e11d2a",
-            border: "none",
-            borderRadius: "var(--radius-sm)",
-            color: "#ffffff",
-            fontSize: "11px",
-            fontWeight: 700,
-            padding: "3px 8px",
-            cursor: "pointer",
-            flexShrink: 0,
-          }}
-        >
-          Fill
-        </button>
-      </div>
-
       <form onSubmit={handleSubmit} className={styles.form} noValidate>
         <TextField
           id="login-email"

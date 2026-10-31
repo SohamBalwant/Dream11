@@ -24,4 +24,5 @@ skills-lock.json
 # Local database cluster
 pgdata/
 logfile
+dump.rdb
 
