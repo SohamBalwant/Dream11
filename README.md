@@ -1,30 +1,63 @@
-# Dream11
+# Dream11 — Watch Parties & Match Buddy
 
-A synchronized watch-party platform. Users create rooms, invite friends, and
-watch video together with playback kept in sync across every participant, while
-talking over voice chat and sharing screens.
+A synchronized watch-party platform with **Match Buddy** — an AI-powered live fantasy cricket companion designed to solve the real problem fans face during a live sports match.
 
-The repository holds three independently deployable applications:
+When friends watch cricket together, they are juggling the live video stream, their fantasy app, and WhatsApp, unable to easily tell how each ball affects their fantasy points versus their friends. **Match Buddy** lives directly inside the room's sidebar and chat, computing deterministic fantasy point deltas after every ball, projecting strategic "What-If" scenarios, maintaining an audit trail of team changes, and delivering AI-powered commentary and banter via Google Gemini (with seamless local template fallback).
 
-| Application | Stack | Role |
-| --- | --- | --- |
-| `backend/` | Go 1.25 | REST API, WebSocket hub, WebRTC SFU, media pipeline |
-| `frontend/` | React 19, Vite, TypeScript | The watch-party client end users join |
-| `admin-portal/` | React 19, Vite, TypeScript | Operator dashboard, deployed separately |
+---
 
-## Features
+## 🏆 Match Buddy (AI Fantasy Companion)
 
-- **Synchronized playback.** One authoritative playback state per room, with a
-  leader whose playhead the room follows. Supports both video-on-demand and live
-  channels.
+### The Fan Problem
+During live matches, fans constantly calculate in their heads: *"Did that six push me ahead of Rahul? What if Bumrah takes a wicket next ball?"* Constantly switching between a broadcast and a fantasy scoreboard creates disjointed social viewing.
+
+### How Match Buddy Solves It
+1. **Real-time Ball-by-Ball Fantasy Tracker**: Driven by a server-side replay engine (Mumbai Blasters vs Delhi Titans, 36 legal balls across 6 dramatic overs), broadcasting live point changes and rank movements to everyone in the room.
+2. **Deterministic Dream11 Scoring System**:
+   - **Batting**: +1 per run, +4 boundary bonus (4s), +6 six bonus (6s), +8 at 30 runs, +16 at 50 runs (replaces 30), -2 duck for top/middle order.
+   - **Bowling**: +25 per wicket (excluding run-outs), +4 maiden over.
+   - **Multipliers**: Captain gets **2x**, Vice-Captain gets **1.5x**.
+   - **Squad & Presets**: 16-player demo roster. Build custom 11s (max 7 per real team) or lock in with 1-click presets (*Balanced XI*, *Bowler Heavy*, *Finisher Heavy*).
+3. **Pre-Match Team Audit Log**: Every lineup creation, captain change, or player swap is broadcast and logged with exact timestamps so room members know nobody altered their team after match lock.
+4. **"What-If" Scenario Simulator**: Test hypothetical deliveries instantly (*"What if striker hits a six?"*, *"What if bowler takes a wicket?"*, *"What if dot?"*) with immediate point projections and leader impact before the ball is bowled.
+5. **AI Companion & Commentary (Google Gemini)**:
+   - Uses Google Gemini API (`gemini-1.5-flash`) for natural language over summaries, swing reactions, Q&A ("Who is winning?", "Who is the top performer?"), and catch-up recaps.
+   - **Resilience Guarantee**: Strict 6-second timeout with 1 retry. If `GEMINI_API_KEY` is absent or unreachable, Match Buddy automatically falls back to the built-in authentic cricket commentary engine without disrupting the match.
+6. **Solo Rivalry Bot**: Don't have a friend online right now? Click **"Add Bot (Rahul)"** to add a virtual friend with a Bowler Heavy squad for instant head-to-head competition.
+7. **Simulated Demo Controls**: Adjust simulation speed (1x, 2x, 5x), skip over, pause, resume, or reset back to lobby anytime.
+
+---
+
+## ⚡ 60-Second Quick Demo Guide
+
+1. **Launch Stack**:
+   - Start backend: `cd backend && go run ./cmd/server` (or `make dev`)
+   - Start frontend: `cd frontend && npm run dev`
+2. **Open Watch Party Room**:
+   - Navigate to `http://localhost:5173` and create or enter a room.
+   - Click the **Trophy icon** in the top header or side panel tabs to open **Match Buddy**.
+3. **Pick Your Fantasy Team**:
+   - Click **"Edit Fantasy Team"** and select a 1-click preset like *Balanced XI* (or customize your 11, Captain, and Vice-Captain).
+   - Click **"Save Lineup"**. Notice the audit entry appear in the Pre-Match Changes log!
+4. **Enable Virtual Rival**:
+   - Click **"Add Bot (Rahul)"** in the simulation controls. Notice Rahul joins the leaderboard with his bowler-heavy lineup.
+5. **Start Live Simulation**:
+   - Click **"Start Match"** (toggle to **2x** or **5x** for rapid replay).
+   - Watch live scores update ball-by-ball with points flashing (+12, +25, etc.), the leaderboard rank flipping, and Match Buddy celebrating key swings!
+6. **Test "What-If" & AI Q&A**:
+   - Click a **"What if SIX?"** or **"What if WICKET?"** chip to see projected point deltas.
+   - Type a question into Ask Buddy: *"Who is winning?"* or click **"Catch Me Up"** to receive an instant recap.
+
+---
+
+## Features (Inox Core Watch-Party Platform)
+
+- **Synchronized playback.** Authoritative playback state per room with leader sync for VOD and live channels.
 - **Real-time chat** persisted to Postgres and replayed on join.
-- **Voice chat and screen sharing** through a Pion-backed selective forwarding
-  unit, so each participant sends their stream once regardless of room size.
-- **Adaptive-bitrate media pipeline.** Uploads are transcoded to a three-tier HLS
-  ladder (1080p/720p/480p) by a background worker.
+- **Voice chat and screen sharing** through a Pion-backed selective forwarding unit (SFU).
+- **Adaptive-bitrate media pipeline.** HLS transcoding (1080p/720p/480p) via asynq background worker.
 - **Rooms, invitations and friendships** with per-member roles and permissions.
-- **Live telemetry** streamed to the admin portal, plus Prometheus metrics and
-  historical analytics.
+- **Live telemetry** streamed to the admin portal, plus Prometheus metrics.
 
 ## Architecture
 
