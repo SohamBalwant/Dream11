@@ -55,6 +55,11 @@ export const LoginPage: React.FC = () => {
     <AuthLayout
       title="Welcome back"
       subtitle="Sign in to pick up where your watch party left off."
+      onQuickFill={() => {
+        setEmail("cricketer@dream11.com");
+        setPassword("Password@123");
+        setFieldErrors({});
+      }}
       footer={
         <>
           New to Dream11?{" "}
