@@ -1,5 +1,4 @@
 import React from "react";
-import { HelpCircle } from "lucide-react";
 import styles from "./WhatIfChips.module.css";
 
 interface WhatIfChipsProps {
@@ -14,10 +13,8 @@ export const WhatIfChips: React.FC<WhatIfChipsProps> = ({
   return (
     <div className={styles.container}>
       <div className={styles.titleRow}>
-        <span className={styles.title}>
-          <HelpCircle size={12} className="inline mr-1" /> What-If Simulator
-        </span>
-        <span className="text-xs text-[var(--color-text-muted)]">Instant projection</span>
+        <span className={styles.title}>What-If Simulator</span>
+        <span className={styles.subtitle}>Instant projection</span>
       </div>
 
       <div className={styles.chipsGrid}>

@@ -1,6 +1,6 @@
 import React from "react";
 import type { MatchStatePayload, BallEvent } from "../../types/matchbuddy";
-import { Sparkles, Radio } from "lucide-react";
+import { Radio } from "lucide-react";
 import styles from "./MatchScoreboard.module.css";
 
 interface MatchScoreboardProps {
@@ -41,9 +41,6 @@ export const MatchScoreboard: React.FC<MatchScoreboardProps> = ({ state }) => {
     return (
       <div className={styles.scoreboard}>
         <div className={styles.topRow}>
-          <span className={styles.demoBadge}>
-            <Sparkles size={11} /> Simulated demo match
-          </span>
           <span className={styles.statusPill}>Connecting...</span>
         </div>
       </div>
@@ -60,9 +57,6 @@ export const MatchScoreboard: React.FC<MatchScoreboardProps> = ({ state }) => {
   return (
     <div className={styles.scoreboard}>
       <div className={styles.topRow}>
-        <span className={styles.demoBadge}>
-          <Sparkles size={11} /> Simulated demo match
-        </span>
         <span
           className={`${styles.statusPill} ${
             state.status === "playing" ? styles.statusPlaying : ""
