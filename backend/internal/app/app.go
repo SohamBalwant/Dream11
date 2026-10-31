@@ -93,7 +93,15 @@ func (a *App) Run() error {
 		return fmt.Errorf("failed to initialize sfu media manager: %w", err)
 	}
 	hub.SetSFUManager(sfuMgr)
-	matchBuddyMgr := matchbuddy.NewManager(matchbuddy.NewTemplateCommentator(), func(evt *ws.Event) {
+	var commentator matchbuddy.Commentator
+	if a.Config.GeminiAPIKey != "" {
+		commentator = matchbuddy.NewGeminiCommentator(a.Config.GeminiAPIKey, a.Config.LLMModel)
+		a.Logger.Info("Match Buddy initialized with Gemini AI commentator", "model", a.Config.LLMModel)
+	} else {
+		commentator = matchbuddy.NewTemplateCommentator()
+		a.Logger.Info("Match Buddy initialized with Template commentator (no GEMINI_API_KEY provided)")
+	}
+	matchBuddyMgr := matchbuddy.NewManager(commentator, func(evt *ws.Event) {
 		hub.Broadcast <- evt
 	})
 	hub.SetMatchBuddyHandler(matchBuddyMgr)

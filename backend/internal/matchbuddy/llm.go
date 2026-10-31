@@ -1,9 +1,15 @@
 package matchbuddy
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
+	"log/slog"
+	"net/http"
 	"strings"
+	"time"
 )
 
 // Commentator provides conversational match analysis, over summaries, and Q&A.
@@ -154,4 +160,220 @@ func (t *TemplateCommentator) GenerateCatchUp(
 	return fmt.Sprintf("Catch-up: Score is %s in %s overs. %s leads the room on %.1f pts with Captain %s. Recent action: %s.",
 		state.ScoreStr, state.OversStr, top.Username, top.Points, top.CaptainName,
 		strings.Join(state.RecentEvents, "; ")), nil
+}
+
+// GeminiCommentator calls Google's Gemini REST API with strict timeouts and automatic template fallback.
+type GeminiCommentator struct {
+	apiKey     string
+	model      string
+	baseURL    string
+	httpClient *http.Client
+	fallback   Commentator
+}
+
+func NewGeminiCommentator(apiKey, model string) *GeminiCommentator {
+	if model == "" {
+		model = "gemini-1.5-flash"
+	}
+	return &GeminiCommentator{
+		apiKey:     apiKey,
+		model:      model,
+		baseURL:    "https://generativelanguage.googleapis.com",
+		httpClient: &http.Client{Timeout: 6 * time.Second},
+		fallback:   NewTemplateCommentator(),
+	}
+}
+
+// SetBaseURL allows overriding the Gemini API host (for testing).
+func (g *GeminiCommentator) SetBaseURL(url string) {
+	g.baseURL = url
+}
+
+type geminiPart struct {
+	Text string `json:"text"`
+}
+
+type geminiContent struct {
+	Parts []geminiPart `json:"parts"`
+}
+
+type geminiGenerationConfig struct {
+	Temperature     float64 `json:"temperature"`
+	MaxOutputTokens int     `json:"maxOutputTokens"`
+}
+
+type geminiRequest struct {
+	Contents         []geminiContent        `json:"contents"`
+	GenerationConfig geminiGenerationConfig `json:"generationConfig"`
+}
+
+type geminiResponse struct {
+	Candidates []struct {
+		Content struct {
+			Parts []struct {
+				Text string `json:"text"`
+			} `json:"parts"`
+		} `json:"content"`
+	} `json:"candidates"`
+}
+
+func (g *GeminiCommentator) callGemini(ctx context.Context, prompt string) (string, error) {
+	if g.apiKey == "" {
+		return "", fmt.Errorf("gemini api key not configured")
+	}
+
+	url := fmt.Sprintf("%s/v1beta/models/%s:generateContent?key=%s", g.baseURL, g.model, g.apiKey)
+
+	reqPayload := geminiRequest{
+		Contents: []geminiContent{
+			{
+				Parts: []geminiPart{
+					{Text: "You are 'Match Buddy', a witty and strategic fantasy cricket companion inside a live watch-party room. Keep responses short (under 2 sentences), punchy, and focused on fantasy point impacts and banter. Fictional match: Mumbai Blasters vs Delhi Titans.\n\n" + prompt},
+				},
+			},
+		},
+		GenerationConfig: geminiGenerationConfig{
+			Temperature:     0.7,
+			MaxOutputTokens: 150,
+		},
+	}
+
+	bodyBytes, err := json.Marshal(reqPayload)
+	if err != nil {
+		return "", err
+	}
+
+	var lastErr error
+	for attempt := 0; attempt < 2; attempt++ {
+		if attempt > 0 {
+			select {
+			case <-ctx.Done():
+				return "", ctx.Err()
+			case <-time.After(200 * time.Millisecond):
+			}
+		}
+
+		httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(bodyBytes))
+		if err != nil {
+			lastErr = err
+			continue
+		}
+		httpReq.Header.Set("Content-Type", "application/json")
+
+		resp, err := g.httpClient.Do(httpReq)
+		if err != nil {
+			lastErr = err
+			continue
+		}
+
+		respBody, readErr := io.ReadAll(resp.Body)
+		resp.Body.Close()
+
+		if resp.StatusCode != http.StatusOK {
+			lastErr = fmt.Errorf("gemini api error (status %d): %s", resp.StatusCode, string(respBody))
+			continue
+		}
+		if readErr != nil {
+			lastErr = readErr
+			continue
+		}
+
+		var parsed geminiResponse
+		if err := json.Unmarshal(respBody, &parsed); err != nil {
+			lastErr = err
+			continue
+		}
+
+		if len(parsed.Candidates) > 0 && len(parsed.Candidates[0].Content.Parts) > 0 {
+			txt := strings.TrimSpace(parsed.Candidates[0].Content.Parts[0].Text)
+			if txt != "" {
+				return txt, nil
+			}
+		}
+
+		lastErr = fmt.Errorf("empty gemini response candidates")
+	}
+
+	return "", lastErr
+}
+
+func (g *GeminiCommentator) GenerateOverSummary(
+	ctx context.Context,
+	overNum int,
+	scoreStr string,
+	wickets int,
+	leaderName string,
+	gap float64,
+) (string, error) {
+	prompt := fmt.Sprintf("Over %d completed. Score: %s/%d. Fantasy leader: %s with a %.1f point lead. Give a brief, exciting over summary emphasizing the fantasy swing.",
+		overNum, scoreStr, wickets, leaderName, gap)
+	text, err := g.callGemini(ctx, prompt)
+	if err != nil {
+		slog.Debug("Gemini over summary failed; falling back to template", "error", err)
+		return g.fallback.GenerateOverSummary(ctx, overNum, scoreStr, wickets, leaderName, gap)
+	}
+	return text, nil
+}
+
+func (g *GeminiCommentator) GenerateSwingCommentary(
+	ctx context.Context,
+	batterName, bowlerName string,
+	runs int,
+	isBoundary, isWicket bool,
+	gainerName string,
+	pointsDelta float64,
+) (string, error) {
+	prompt := fmt.Sprintf("Ball action: %s bowling to %s. Outcome: %d runs (boundary: %t, wicket: %t). Biggest fantasy gainer: %s (+%.1f pts). Give a 1-2 sentence dramatic reaction celebrating this fantasy swing.",
+		bowlerName, batterName, runs, isBoundary, isWicket, gainerName, pointsDelta)
+	text, err := g.callGemini(ctx, prompt)
+	if err != nil {
+		slog.Debug("Gemini swing commentary failed; falling back to template", "error", err)
+		return g.fallback.GenerateSwingCommentary(ctx, batterName, bowlerName, runs, isBoundary, isWicket, gainerName, pointsDelta)
+	}
+	return text, nil
+}
+
+func (g *GeminiCommentator) AnswerQuestion(
+	ctx context.Context,
+	question string,
+	state MatchStateSummary,
+) (string, error) {
+	prompt := fmt.Sprintf("Fan question: \"%s\". Current match context: Score %s in %s overs; Batters: %s; Bowler: %s; Top leaderboard: %+v; Recent events: %s. Answer accurately in 1-2 sentences with fantasy insight and friendly banter.",
+		question, state.ScoreStr, state.OversStr, strings.Join(state.CurrentBatters, ", "), state.CurrentBowler, state.Leaderboard, strings.Join(state.RecentEvents, "; "))
+	text, err := g.callGemini(ctx, prompt)
+	if err != nil {
+		slog.Debug("Gemini AnswerQuestion failed; falling back to template", "error", err)
+		return g.fallback.AnswerQuestion(ctx, question, state)
+	}
+	return text, nil
+}
+
+func (g *GeminiCommentator) ExplainWhatIf(
+	ctx context.Context,
+	scenario, strikerName, bowlerName string,
+	gainerName string,
+	maxDelta float64,
+) (string, error) {
+	prompt := fmt.Sprintf("Scenario: What if next ball is a '%s'? Striker: %s, Bowler: %s. Projected biggest winner: %s (+%.1f pts). Explain the strategic fantasy outcome in 1-2 clear, punchy sentences.",
+		scenario, strikerName, bowlerName, gainerName, maxDelta)
+	text, err := g.callGemini(ctx, prompt)
+	if err != nil {
+		slog.Debug("Gemini ExplainWhatIf failed; falling back to template", "error", err)
+		return g.fallback.ExplainWhatIf(ctx, scenario, strikerName, bowlerName, gainerName, maxDelta)
+	}
+	return text, nil
+}
+
+func (g *GeminiCommentator) GenerateCatchUp(
+	ctx context.Context,
+	state MatchStateSummary,
+) (string, error) {
+	prompt := fmt.Sprintf("Generate a 2-sentence match and fantasy recap for a user who just joined the watch party. Score: %s in %s overs. Leaderboard: %+v. Recent events: %s.",
+		state.ScoreStr, state.OversStr, state.Leaderboard, strings.Join(state.RecentEvents, "; "))
+	text, err := g.callGemini(ctx, prompt)
+	if err != nil {
+		slog.Debug("Gemini GenerateCatchUp failed; falling back to template", "error", err)
+		return g.fallback.GenerateCatchUp(ctx, state)
+	}
+	return text, nil
 }

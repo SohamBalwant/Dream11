@@ -34,6 +34,8 @@ type Config struct {
 	WebRTCPortMin          string
 	WebRTCPortMax          string
 	WebRTCPublicIP         string
+	GeminiAPIKey           string
+	LLMModel               string
 }
 
 func Load() (*Config, error) {
@@ -77,6 +79,8 @@ func Load() (*Config, error) {
 		// Cloud, EC2, GCE). Left empty the SFU advertises its private IP, which no
 		// remote browser can route to, and voice chat never leaves "checking".
 		WebRTCPublicIP: getEnv("WEBRTC_PUBLIC_IP", ""),
+		GeminiAPIKey:   getEnv("GEMINI_API_KEY", ""),
+		LLMModel:       getEnv("LLM_MODEL", "gemini-1.5-flash"),
 	}
 
 	// Fail fast if DATABASE_URL or REDIS_URL is empty
