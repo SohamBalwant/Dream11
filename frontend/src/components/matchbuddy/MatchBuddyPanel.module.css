@@ -1,0 +1,51 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--color-canvas);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.feedSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.feedHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.feedTitle {
+  font-size: var(--text-label);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--color-text-secondary);
+}
+
+.feedStream {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.emptyFeed {
+  padding: var(--space-4);
+  text-align: center;
+  font-size: var(--text-meta);
+  color: var(--color-text-muted);
+  background: var(--color-surface-1);
+  border: 1px dashed var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+}

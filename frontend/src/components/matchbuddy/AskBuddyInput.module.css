@@ -1,0 +1,108 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  background: var(--color-surface-1);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3);
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  font-size: var(--text-label);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: #38bdf8;
+}
+
+.catchUpBtn {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-accent-text);
+  background: var(--color-accent-subtle);
+  border: 1px solid var(--color-accent-border);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all 150ms var(--ease-standard);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.catchUpBtn:hover {
+  background: var(--color-accent-subtle-hover);
+}
+
+.inputForm {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.inputField {
+  flex: 1;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  color: #ffffff;
+  font-size: var(--text-compact);
+  outline: none;
+  transition: border-color 150ms var(--ease-standard);
+}
+
+.inputField:focus {
+  border-color: #38bdf8;
+}
+
+.sendBtn {
+  background: #e11d2a;
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 150ms var(--ease-standard);
+}
+
+.sendBtn:hover:not(:disabled) {
+  background: #c71622;
+}
+
+.sendBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.quickPrompts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1-5);
+}
+
+.promptChip {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-full);
+  padding: 2px 8px;
+  cursor: pointer;
+  transition: all 120ms var(--ease-standard);
+}
+
+.promptChip:hover {
+  border-color: var(--color-border-strong);
+  color: #ffffff;
+}

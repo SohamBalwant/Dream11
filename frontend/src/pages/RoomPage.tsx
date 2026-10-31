@@ -25,7 +25,8 @@ import { AudioRenderer } from "../components/rtc/AudioRenderer";
 import { RoomSidebar, type RoomChannel } from "../components/room/RoomSidebar";
 import { RoomHeader, type SidePanelTab } from "../components/room/RoomHeader";
 import { VoiceStage } from "../components/room/VoiceStage";
-import { MessageSquare, RotateCcw, ShieldAlert, Users, X } from "lucide-react";
+import { MatchBuddyPanel } from "../components/matchbuddy/MatchBuddyPanel";
+import { MessageSquare, RotateCcw, ShieldAlert, Users, X, Trophy } from "lucide-react";
 import { tabIds } from "../utils/tabs";
 import type { WSRemovedFromRoomPayload } from "../types/ws";
 import type { RoomArrival } from "../contexts/playerSync.context";
@@ -85,7 +86,8 @@ export const RoomPage: React.FC = () => {
   // already the main view the chat tab would only duplicate it.
   const [panelTab, setPanelTab] = useState<SidePanelTab>("members");
   const chatInMain = activeChannel === "general";
-  const effectivePanelTab: SidePanelTab = chatInMain ? "members" : panelTab;
+  const effectivePanelTab: SidePanelTab =
+    chatInMain && panelTab === "chat" ? "members" : panelTab;
   const openPanel: SidePanelTab | null = showMembers ? effectivePanelTab : null;
   const isChatVisible = chatInMain || openPanel === "chat";
   // Stamped with the room it counts for: this page is reused across room
@@ -390,11 +392,17 @@ export const RoomPage: React.FC = () => {
 
         <aside
           className={shellStyles.panelArea}
-          aria-label={effectivePanelTab === "chat" ? "Chat" : "Members"}
+          aria-label={
+            effectivePanelTab === "chat"
+              ? "Chat"
+              : effectivePanelTab === "matchbuddy"
+                ? "Match Buddy"
+                : "Members"
+          }
           aria-hidden={!showMembers || undefined}
         >
           <div className={shellStyles.panelBar}>
-            {chatInMain ? (
+            {chatInMain && effectivePanelTab !== "matchbuddy" ? (
               <span className={shellStyles.panelTitle}>Members</span>
             ) : (
               <Tabs<SidePanelTab>
@@ -410,16 +418,25 @@ export const RoomPage: React.FC = () => {
                     label: "Members",
                     icon: <Users size={14} />,
                   },
+                  ...(chatInMain
+                    ? []
+                    : [
+                        {
+                          id: "chat" as const,
+                          label: "Chat",
+                          icon: <MessageSquare size={14} />,
+                          badge:
+                            chatUnread > 0 ? (
+                              <Badge variant="danger" pop>
+                                {chatUnread > 99 ? "99+" : chatUnread}
+                              </Badge>
+                            ) : null,
+                        },
+                      ]),
                   {
-                    id: "chat",
-                    label: "Chat",
-                    icon: <MessageSquare size={14} />,
-                    badge:
-                      chatUnread > 0 ? (
-                        <Badge variant="danger" pop>
-                          {chatUnread > 99 ? "99+" : chatUnread}
-                        </Badge>
-                      ) : null,
+                    id: "matchbuddy",
+                    label: "Match Buddy",
+                    icon: <Trophy size={14} />,
                   },
                 ]}
               />
@@ -434,12 +451,12 @@ export const RoomPage: React.FC = () => {
             </IconButton>
           </div>
 
-          {/* The member list stays mounted while chat is showing so it keeps its
+          {/* The member list stays mounted while chat or matchbuddy is showing so it keeps its
               invite draft and scroll position. */}
           <div
             className={shellStyles.panelBody}
             hidden={effectivePanelTab !== "members"}
-            {...(chatInMain
+            {...(chatInMain && effectivePanelTab === "members"
               ? {}
               : {
                   role: "tabpanel",
@@ -457,6 +474,17 @@ export const RoomPage: React.FC = () => {
               aria-labelledby={tabIds(PANEL_TABS_ID, "chat").tab}
             >
               <ChatPanel roomId={activeRoom?.id} compact />
+            </div>
+          )}
+          {effectivePanelTab === "matchbuddy" && (
+            <div
+              className={shellStyles.panelBody}
+              role="tabpanel"
+              id={tabIds(PANEL_TABS_ID, "matchbuddy").panel}
+              aria-labelledby={tabIds(PANEL_TABS_ID, "matchbuddy").tab}
+              style={{ padding: 0 }}
+            >
+              <MatchBuddyPanel roomId={activeRoom?.id} />
             </div>
           )}
         </aside>

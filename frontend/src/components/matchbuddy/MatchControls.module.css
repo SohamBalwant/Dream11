@@ -1,0 +1,128 @@
+.controlsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  background: var(--color-surface-1);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3);
+}
+
+.primaryRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.mainActionBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  background: #e11d2a;
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-compact);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 150ms var(--ease-standard);
+  box-shadow: 0 2px 8px rgba(225, 29, 42, 0.35);
+}
+
+.mainActionBtn:hover:not(:disabled) {
+  background: #c71622;
+  box-shadow: 0 4px 12px rgba(225, 29, 42, 0.45);
+}
+
+.teamBtn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border-default);
+  color: #ffffff;
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-compact);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 150ms var(--ease-standard);
+}
+
+.teamBtn:hover:not(:disabled) {
+  border-color: #e11d2a;
+  color: #ff7680;
+}
+
+.secondaryRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.speedGroup {
+  display: flex;
+  align-items: center;
+  background: var(--color-surface-2);
+  border-radius: var(--radius-md);
+  padding: 2px;
+  border: 1px solid var(--color-border-subtle);
+}
+
+.speedBtn {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 120ms var(--ease-standard);
+}
+
+.speedBtn:hover {
+  color: #ffffff;
+}
+
+.speedBtnActive {
+  background: #e11d2a;
+  color: #ffffff;
+}
+
+.utilityGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1-5);
+}
+
+.utilBtn {
+  font-size: var(--text-micro);
+  font-weight: 600;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border-subtle);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 150ms var(--ease-standard);
+}
+
+.utilBtn:hover:not(:disabled) {
+  color: #ffffff;
+  border-color: var(--color-border-default);
+}
+
+.soloActive {
+  border-color: rgba(46, 204, 113, 0.4);
+  background: rgba(46, 204, 113, 0.12);
+  color: #2ecc71;
+}

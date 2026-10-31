@@ -1,0 +1,176 @@
+.scoreboard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  background: linear-gradient(135deg, rgba(225, 29, 42, 0.08) 0%, var(--color-surface-1) 100%);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3);
+  position: relative;
+  overflow: hidden;
+}
+
+.scoreboard::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #e11d2a, #ff5c67, #e11d2a);
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.demoBadge {
+  font-size: var(--text-micro);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  background: rgba(225, 29, 42, 0.2);
+  color: #ff7680;
+  border: 1px solid rgba(225, 29, 42, 0.35);
+  border-radius: var(--radius-full);
+  padding: 2px 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.statusPill {
+  font-size: var(--text-micro);
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-2);
+  color: var(--color-text-secondary);
+}
+
+.statusPlaying {
+  background: rgba(46, 204, 113, 0.15);
+  color: #2ecc71;
+  border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+.mainStats {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.scoreGroup {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.teamName {
+  font-size: var(--text-subhead);
+  font-weight: 800;
+  color: var(--color-text-primary);
+  letter-spacing: var(--tracking-tight);
+}
+
+.score {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #ffffff;
+  font-feature-settings: "tnum";
+}
+
+.overs {
+  font-size: var(--text-meta);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.runRate {
+  font-size: var(--text-meta);
+  color: var(--color-text-muted);
+  font-feature-settings: "tnum";
+}
+
+.creaseInfo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  background: var(--color-surface-2);
+  padding: var(--space-2) var(--space-2-5);
+  border-radius: var(--radius-md);
+  font-size: var(--text-compact);
+}
+
+.playerRole {
+  font-size: var(--text-micro);
+  font-weight: 700;
+  color: var(--color-accent-text);
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.playerName {
+  font-weight: 600;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.recentBallsRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  overflow-x: auto;
+}
+
+.recentLabel {
+  font-size: var(--text-micro);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+}
+
+.ballChip {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-micro);
+  font-weight: 700;
+  background: var(--color-surface-3);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-subtle);
+  flex-shrink: 0;
+}
+
+.chipSix {
+  background: #e11d2a;
+  color: #ffffff;
+  border-color: #ff5c67;
+  box-shadow: 0 0 8px rgba(225, 29, 42, 0.4);
+}
+
+.chipFour {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #60a5fa;
+}
+
+.chipWicket {
+  background: #dc2626;
+  color: #ffffff;
+  border-color: #f87171;
+}
+
+.chipDot {
+  background: var(--color-surface-2);
+  color: var(--color-text-muted);
+}

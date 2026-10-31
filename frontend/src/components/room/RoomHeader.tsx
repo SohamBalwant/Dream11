@@ -14,6 +14,7 @@ import {
   LogOut,
   Menu,
   MessageSquare,
+  Trophy,
   type LucideIcon,
 } from "lucide-react";
 import styles from "./RoomHeader.module.css";
@@ -38,7 +39,7 @@ interface RoomHeaderProps {
   onlineCount?: number;
 }
 
-export type SidePanelTab = "members" | "chat";
+export type SidePanelTab = "members" | "chat" | "matchbuddy";
 
 /** File name from a media URL. A malformed escape (e.g. "50%off.mp4") must not
  *  throw during render and blank the room for everyone playing it. */
@@ -159,6 +160,23 @@ export const RoomHeader: React.FC<RoomHeaderProps> = ({
           tooltipSide="bottom"
         >
           <Users size={19} />
+        </IconButton>
+
+        <IconButton
+          label={
+            openPanel === "matchbuddy"
+              ? "Hide Match Buddy"
+              : "Show Match Buddy"
+          }
+          tooltip={
+            openPanel === "matchbuddy" ? "Hide Match Buddy" : "Match Buddy"
+          }
+          isActive={openPanel === "matchbuddy"}
+          onClick={() => onTogglePanel("matchbuddy")}
+          aria-pressed={openPanel === "matchbuddy"}
+          tooltipSide="bottom"
+        >
+          <Trophy size={19} />
         </IconButton>
 
         <span className={styles.divider} aria-hidden="true" />

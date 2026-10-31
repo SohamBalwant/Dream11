@@ -33,6 +33,15 @@ export type WSEventType =
   | "REMOVED_FROM_ROOM"
   | "VOICE_INVITE"
   | "VOICE_INVITE_REPLY"
+  | "MATCH_CONTROL"
+  | "MATCH_TEAM_SET"
+  | "MATCH_ASK"
+  | "MATCH_WHATIF"
+  | "MATCH_CATCHUP"
+  | "MATCH_STATE"
+  | "MATCH_BALL"
+  | "MATCH_FEED"
+  | "MATCH_TEAM_CHANGES"
   | "ERROR";
 
 export interface WSMessage<T = unknown> {

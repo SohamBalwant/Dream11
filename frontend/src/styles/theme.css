@@ -52,13 +52,13 @@
      --color-accent is for fills (white text on it clears 4.5:1).
      --color-accent-text is for accent-coloured text and icons on
      dark surfaces, where the fill colour would read too dim. */
-  --color-accent: #4a6bd9;
-  --color-accent-hover: #3f5fcc;
-  --color-accent-active: #3654bb;
-  --color-accent-text: #8ea6f2;
-  --color-accent-subtle: rgba(74, 107, 217, 0.14);
-  --color-accent-subtle-hover: rgba(74, 107, 217, 0.22);
-  --color-accent-border: rgba(110, 138, 230, 0.4);
+  --color-accent: #e11d2a;
+  --color-accent-hover: #c71622;
+  --color-accent-active: #b0121c;
+  --color-accent-text: #ff5c67;
+  --color-accent-subtle: rgba(225, 29, 42, 0.14);
+  --color-accent-subtle-hover: rgba(225, 29, 42, 0.22);
+  --color-accent-border: rgba(235, 60, 72, 0.4);
 
   /* ── Semantic states ────────────────────────────────────── */
   --color-success: #2ecc71;
