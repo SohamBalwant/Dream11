@@ -2,6 +2,7 @@
   "name": "Dream11",
   "private": true,
   "scripts": {
+    "build": "npm --prefix frontend run build",
     "prepare": "husky install"
   },
   "devDependencies": {
